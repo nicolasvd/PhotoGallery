@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PhotoGallery</string>
+    <string name="layout_horizontal">Horizontal</string>
+    <string name="layout_vertical">Vertical</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>
