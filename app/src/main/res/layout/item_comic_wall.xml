@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<be.ibad.photogallery.widget.TrackedView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/item_photo"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height"
-        android:scaleType="centerCrop"
-        tools:src="@mipmap/ic_launcher" />
+        android:layout_height="200dp"
+        android:background="?attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/item_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/item_photo"
-        android:background="@color/transparent_black"
-        android:padding="4dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="#ffffff"
-        tools:text="TEXT" />
+        <ImageView
+            android:id="@+id/item_photo"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_height"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_launcher" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/item_photo"
+            android:background="@color/transparent_black"
+            android:padding="4dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="#ffffff"
+            tools:text="TEXT" />
+
+    </RelativeLayout>
+</be.ibad.photogallery.widget.TrackedView>

@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +17,14 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import be.ibad.photogallery.R;
 import be.ibad.photogallery.model.Record;
-import be.ibad.photogallery.tracking.ActiveViewTracker;
+import be.ibad.photogallery.utils.DevLog;
+import be.ibad.photogallery.widget.TrackedView;
 
 /**
  * @author Pc Nicolas
@@ -38,37 +40,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
     private RequestBuilder<Bitmap> mGlide;
     private RequestManager mRequestManager;
     private int type = LIST_VIEW;
-    private ActiveViewTracker mActiveViewTracker;
+    private Set<String> mTrackedViews = new HashSet<>();
+
 
     public GalleryAdapter(RequestManager requestManager) {
         mRequestManager = requestManager;
         mGlide = mRequestManager.asBitmap();
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull final RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        mActiveViewTracker = new ActiveViewTracker(recyclerView);
-        mActiveViewTracker.setListener(new ActiveViewTracker.VisibilityTrackerListener() {
-            @Override
-            public void onMatchTrackingConstraints(View view, double percentageVisible) {
-                view.findViewById(R.id.item_name).setBackgroundColor(Color.GREEN);
-            }
-
-            @Override
-            public void onScrollPercentage(View view, double visibleHeightPercentage) {
-                GalleryViewHolder holder = (GalleryViewHolder) recyclerView.findContainingViewHolder(view);
-                if (holder != null) {
-                    Record record = items.get(holder.getAdapterPosition());
-                    holder.nameTextView.setText(String.format(Locale.getDefault(), "%s %.2f %%", record.getFields().getPersonnageS(), visibleHeightPercentage));
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     public void setData(ArrayList<Record> data) {
@@ -125,7 +102,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
     public void onViewRecycled(@NonNull GalleryViewHolder holder) {
         super.onViewRecycled(holder);
         mRequestManager.clear(holder.photoImageView);
-        mActiveViewTracker.stopTracking(holder.itemView);
     }
 
     @Override
@@ -154,12 +130,30 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
             super(itemView);
             photoImageView = itemView.findViewById(R.id.item_photo);
             nameTextView = itemView.findViewById(R.id.item_name);
-            itemView.setOnClickListener(new View.OnClickListener() {
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (listener != null) {
+//                        DevLog.i("PLOP getAdapterPosition " + getAdapterPosition() + " getLayoutPosition " + getLayoutPosition());
+//                        listener.onItemClick(v, getAdapterPosition());
+//                    }
+//                }
+//            });
+
+            ((TrackedView) itemView).setListener(new TrackedView.ExposureChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        Log.i("TEST", "getAdapterPosition " + getAdapterPosition() + " getLayoutPosition " + getLayoutPosition());
-                        listener.onItemClick(v, getAdapterPosition());
+                public void onMatchTrackingRules(View view) {
+                    int position = getAdapterPosition();
+                    if (position != -1) {
+                        Record record = items.get(position);
+                        DevLog.d("PLOP isTracked: " + !mTrackedViews.contains(record.getRecordid()));
+                        DevLog.d("PLOP position: " + getAdapterPosition());
+                        if (!mTrackedViews.contains(record.getRecordid())) {
+                            view.findViewById(R.id.item_name).setBackgroundColor(Color.GREEN);
+                            mTrackedViews.add(record.getRecordid());
+                        } else {
+                            view.findViewById(R.id.item_name).setBackgroundColor(Color.GREEN);
+                        }
                     }
                 }
             });
